@@ -17,6 +17,26 @@ const createUser = async (req, res) => {
     }
 };
 
+/**
+ * @function getUserById
+ * @description Gets a user by their id.
+ * @param {Object} req - Express request object containing user data in the body.
+ * @param {Object} res - Express response object used to send back the created user or an error message.
+ * @returns {void}
+ */
+const getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if(!user) {
+            return res.status(404).send();
+        }
+        res.send(user);
+    } catch (error) {
+        res.status(500).send(error);
+    } 
+};
+
 module.exports = {
-    createUser
+    createUser,
+    getUserById
 }
