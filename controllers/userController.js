@@ -55,8 +55,28 @@ const updateUser = async (req, res) => {
     }
 };
 
+/**
+ * @function deleteUser
+ * @description Gets a user by their id and deletes their information.
+ * @param {Object} req - Express request object containing user data in the body.
+ * @param {Object} res - Express response object used to send back the created user or an error message.
+ * @returns {void}
+ */
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
+        if(!user) {
+            return res.status(404).send();
+        }
+        res.send(user);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
 module.exports = {
     createUser,
     getUserById,
-    updateUser
+    updateUser,
+    deleteUser
 }
