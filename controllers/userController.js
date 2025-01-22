@@ -36,7 +36,27 @@ const getUserById = async (req, res) => {
     } 
 };
 
+/**
+ * @function updateUser
+ * @description Gets a user by their id and updates their information.
+ * @param {Object} req - Express request object containing user data in the body.
+ * @param {Object} res - Express response object used to send back the created user or an error message.
+ * @returns {void}
+ */
+const updateUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id);
+        if(!user) {
+            return res.status(404).send();
+        }
+        res.send(user);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+};
+
 module.exports = {
     createUser,
-    getUserById
+    getUserById,
+    updateUser
 }
