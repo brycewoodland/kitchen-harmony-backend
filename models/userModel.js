@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('./recipeModel');
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -11,10 +12,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    recipes: {
-        type: [String],
-        required: true
-    }
+    recipes: [{
+        type: String,
+    }]
 });
 
 const User = mongoose.model('User', userSchema);

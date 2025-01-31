@@ -8,12 +8,17 @@ const User = require('../models/userModel');
  * @returns {void}
  */
 const createUser = async (req, res) => {
+        const user = new User({
+            username: req.body.username,
+            email: req.body.email,
+            recipes: req.body.recipes
+        });
+
     try {
-        const user = new User(req.body);
-        await user.save();
-        res.status(201).send(user);
-    } catch (error) {
-        res.status(400).send(error);
+        const newUser = await user.save();
+        res.status(201).json({ id: newUser._id });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
     }
 };
 
@@ -26,14 +31,16 @@ const createUser = async (req, res) => {
  */
 const getUserById = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
-        if(!user) {
-            return res.status(404).send();
-        }
-        res.send(user);
-    } catch (error) {
-        res.status(500).send(error);
-    } 
+        const user = await User.findById(req.params.id)
+            .select("_id username email recipes"); // Selects only necessary fields
+        
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        res.json(user);
+    } catch (err) {
+        console.error("Error fetching user:", err);
+        res.status(500).send({ message: err.message });
+    }
 };
 
 /**
@@ -45,8 +52,8 @@ const getUserById = async (req, res) => {
  */
 const updateUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id);
-        if(!user) {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!user) {
             return res.status(404).send();
         }
         res.send(user);
@@ -65,7 +72,7 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
-        if(!user) {
+        if (!user) {
             return res.status(404).send();
         }
         res.send(user);
@@ -79,4 +86,4 @@ module.exports = {
     getUserById,
     updateUser,
     deleteUser
-}
+};

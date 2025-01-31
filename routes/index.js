@@ -1,5 +1,5 @@
 const express = require('express');
-const routes = express.Router();
+const router = express.Router();
 
 /**
  * @swagger
@@ -32,9 +32,9 @@ const routes = express.Router();
  */
 // Example route to check authentication status
 
-routes.use('/', require('./userRoute'));
-routes.use('/', require('./recipeRoute'));
-routes.use('/', require('./inventoryRoute'));
-routes.use('/', require('./shoppingListRoute'));
+router.use('/users', require('./userRoute'));
+// router.use('/', require('./recipeRoute'));
+// router.use('/', require('./inventoryRoute'));
+// router.use('/', require('./shoppingListRoute'));
 
-module.exports = routes;
+module.exports = router;
