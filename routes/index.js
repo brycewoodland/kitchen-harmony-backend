@@ -33,7 +33,7 @@ const router = express.Router();
 // Example route to check authentication status
 
 router.use('/users', require('./userRoute'));
-// router.use('/', require('./recipeRoute'));
+// router.use('/recipe', require('./recipeRoute'));
 // router.use('/', require('./inventoryRoute'));
 // router.use('/', require('./shoppingListRoute'));
 
