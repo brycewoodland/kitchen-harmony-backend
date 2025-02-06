@@ -198,3 +198,5 @@ router.put('/:id', requiresAuth(), recipeController.updateRecipe);
  *         description: The recipe was not found
  */
 router.delete('/:id', requiresAuth(), recipeController.deleteRecipe);
+
+module.exports = router;
