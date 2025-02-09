@@ -34,6 +34,7 @@ const router = express.Router();
 
 router.use('/users', require('./userRoute'));
 router.use('/recipe', require('./recipeRoute'));
+router.use('/mealplan', require('./mealplanRoute'));
 // router.use('/', require('./inventoryRoute'));
 // router.use('/', require('./shoppingListRoute'));
 
