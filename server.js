@@ -19,10 +19,10 @@ connectDB();
 const config = {
   authRequired: false,
   auth0Logout: true,
-  secret: 'a long, randomly-generated string stored in env',
-  baseURL: 'http://localhost:3000',
-  clientID: 'Vbmo6BgDc9vNo2cOPPwZAdI9CipKP4Mb',
-  issuerBaseURL: 'https://dev-kuz06fnjpkyzr40v.us.auth0.com'
+  secret: process.env.AUTH0_SECRET,
+  baseURL: process.env.baseURL || 'http://localhost:3000',
+  clientID: process.env.AUTH0_CLIENT_ID,
+  issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}.com`
 };
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
