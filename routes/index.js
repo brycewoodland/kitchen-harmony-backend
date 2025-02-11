@@ -36,6 +36,6 @@ router.use('/users', require('./userRoute'));
 router.use('/recipe', require('./recipeRoute'));
 router.use('/mealplan', require('./mealplanRoute'));
 // router.use('/', require('./inventoryRoute'));
-// router.use('/', require('./shoppingListRoute'));
+router.use('/shoppingLists', require('./shoppingListRoute'));
 
 module.exports = router;
