@@ -1,5 +1,32 @@
 const mongoose = require('mongoose');
 
+const ingredientSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    quantity: {
+        type: String,
+        required: true
+    },
+    unit: {
+        type: String,
+        required: true
+    },
+    expirationDate: {
+        type: Date,
+        required: false
+    },
+    location: {
+        type: String,
+        required: false
+    },
+    lastUpdated: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 const inventorySchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -7,7 +34,7 @@ const inventorySchema = new mongoose.Schema({
         required: true
     },
     ingredients: {
-        type: [String],
+        type: [ingredientSchema],
         required: true
     },
     createdAt: {
@@ -18,7 +45,7 @@ const inventorySchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-})
+}, { collection: 'inventory' });
 
 const Inventory = mongoose.model('Inventory', inventorySchema);
 
