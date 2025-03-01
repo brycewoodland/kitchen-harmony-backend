@@ -83,9 +83,31 @@ const deleteUser = async (req, res) => {
     }
 };
 
+/**
+ * @function getUserByEmail
+ * @description Gets a user by their email.
+ * @param {Object} req - Express request object containing user data in the body.
+ * @param {Object} res - Express response object used to send back the created user or an error message.
+ * @returns {void}
+ */
+const getUserByEmail = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.params.email })
+            .select("_id fname lname username email recipes"); // Selects only necessary fields
+        
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        res.json(user);
+    } catch (err) {
+        console.error("Error fetching user:", err);
+        res.status(500).send({ message: err.message });
+    }
+};
+
 module.exports = {
     createUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserByEmail
 };

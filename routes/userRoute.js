@@ -139,4 +139,30 @@ router.put('/:id', userController.updateUser);
  */
 router.delete('/:id', userController.deleteUser);
 
+/**
+ * @swagger
+ * /users/email/{email}:
+ *   get:
+ *     summary: Get a user by email
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The email of the user
+ *     responses:
+ *       200:
+ *         description: The user description by email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: The user was not found
+ */
+router.get('/email/:email', userController.getUserByEmail);
+
+
 module.exports = router;
