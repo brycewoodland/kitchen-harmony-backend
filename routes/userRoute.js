@@ -29,6 +29,8 @@ const { requiresAuth } = require('express-openid-connect');
  *           description: List of recipe IDs
  *       example:
  *         id: 67906759aa52af3c65c351ff
+ *         lname: Bryce
+ *         fname: Woodland
  *         username: bryce_woodland
  *         email: woo17047@byui.edu
  *         recipes: [67906a3e8fd11b2671912edd]
@@ -57,7 +59,7 @@ const { requiresAuth } = require('express-openid-connect');
  *       404:
  *         description: The user was not found
  */
-router.get('/:id', requiresAuth(), userController.getUserById);
+router.get('/:id', userController.getUserById);
 
 /**
  * @swagger

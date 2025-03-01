@@ -9,6 +9,8 @@ const User = require('../models/userModel');
  */
 const createUser = async (req, res) => {
         const user = new User({
+            fname: req.body.fname,
+            lname: req.body.lname,
             username: req.body.username,
             email: req.body.email,
             recipes: req.body.recipes
