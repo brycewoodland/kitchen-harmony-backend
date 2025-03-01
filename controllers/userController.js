@@ -34,7 +34,7 @@ const createUser = async (req, res) => {
 const getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
-            .select("_id username email recipes"); // Selects only necessary fields
+            .select("_id fname lname username email recipes"); // Selects only necessary fields
         
         if (!user) return res.status(404).json({ message: "User not found" });
 
