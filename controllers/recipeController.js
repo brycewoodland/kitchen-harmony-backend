@@ -2,14 +2,16 @@ const Recipe = require('../models/recipeModel');
 
 /**
  * @function getAllRecipes
- * @description Gets all recipes from the database.
+ * @description Gets all recipes associated with the user's ID from the database.
  * @param {Object} req - Express request object containing user data in the body.
  * @param {Object} res - Express response object used to send back the created user or an error message.
  * @returns {void}
  */
 const getAllRecipes = async (req, res) => {
+    const { userId } = req.params;
+
     try {
-        const recipes = await Recipe.find();
+        const recipes = await Recipe.find({ userId });
         res.status(200).json(recipes);
     } catch (err) {
         console.error('Error fetching recipes:', err);
