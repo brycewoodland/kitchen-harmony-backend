@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const recipeController = require('../controllers/recipeController');
+const { requiresAuth } = require('express-openid-connect');
 
 /**
  * @swagger
@@ -19,7 +20,7 @@ const recipeController = require('../controllers/recipeController');
  *       properties:
  *         id:
  *           type: string
- *           description: The auto-generated id of the user
+ *           description: The auto-generated id of the recipe
  *         title:
  *           type: string
  *           description: The name of the recipe
@@ -31,23 +32,33 @@ const recipeController = require('../controllers/recipeController');
  *           items:
  *             type: object
  *             properties:
- *              name:
- *                type: string
- *              quantity:
- *                type: string
- *              unit:
- *                type: string
+ *               name:
+ *                 type: string
+ *               quantity:
+ *                 type: string
+ *               unit:
+ *                 type: string
  *           description: Ingredients in the recipe
  *         instructions:
  *           type: string
+ *           description: The instructions for the recipe
+ *         author:
+ *           type: string
+ *           description: The author of the recipe
  *         isPublic:
  *           type: boolean
+ *           description: Whether the recipe is public or not
  *         tags:
  *           type: array
- *           items: 
+ *           items:
  *             type: string
+ *           description: Tags associated with the recipe
  *         imageUrl:
  *           type: string
+ *           description: The URL of the recipe image
+ *         userId:
+ *           type: string
+ *           description: The ID of the user who created the recipe
  *       example:
  *         id: 67906a3e8fd11b2671912edd
  *         title: "Chocolate Cake"
@@ -63,6 +74,7 @@ const recipeController = require('../controllers/recipeController');
  *             quantity: "1/2"
  *             unit: "cup"
  *         instructions: "Mix the ingredients and bake at 350°F for 30 minutes."
+ *         author: "John Doe"
  *         isPublic: true
  *         tags: ["dessert", "chocolate"]
  *         imageUrl: "http://example.com/chocolate-cake.jpg"
@@ -71,10 +83,17 @@ const recipeController = require('../controllers/recipeController');
 
 /**
  * @swagger
- * /recipe:
+ * /recipe/user/{userId}:
  *   get:
- *     summary: Get all recipes
+ *     summary: Get all recipes by user ID
  *     tags: [Recipe]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the user to fetch recipes for
  *     responses:
  *       200:
  *         description: A list of recipes
@@ -87,7 +106,7 @@ const recipeController = require('../controllers/recipeController');
  *       404:
  *         description: No recipes found
  */
-router.get('/', recipeController.getAllRecipes);
+router.get('/user/:userId', recipeController.getAllRecipesByUserId);
 
 /**
  * @swagger
