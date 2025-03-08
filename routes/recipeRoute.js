@@ -81,6 +81,8 @@ const { requiresAuth } = require('express-openid-connect');
  *         userId: "67906759aa52af3c65c351ff"
  */
 
+router.get('/recipe', recipeController.getAllRecipes);
+
 /**
  * @swagger
  * /recipe/user/{userId}:
