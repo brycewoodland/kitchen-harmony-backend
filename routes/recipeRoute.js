@@ -161,7 +161,7 @@ router.get('/:id', recipeController.getRecipeById);
  *       500:
  *         description: Internal server error
  */
-router.post('/', recipeController.createRecipe);
+router.post('/user/:userId', recipeController.createRecipe);
 
 /**
  * @swagger
