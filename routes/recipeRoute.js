@@ -81,7 +81,25 @@ const { requiresAuth } = require('express-openid-connect');
  *         userId: "67906759aa52af3c65c351ff"
  */
 
-router.get('/recipe', recipeController.getAllRecipes);
+/**
+ * @swagger
+ * /recipe:
+ *   get:
+ *     summary: Get all recipes
+ *     tags: [Recipe]
+ *     responses:
+ *       200:
+ *         description: A list of all recipes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Recipe'
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/', recipeController.getAllRecipes);
 
 /**
  * @swagger
