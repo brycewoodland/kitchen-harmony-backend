@@ -1,10 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const mealplanController = require('../controllers/mealplanController');
+const checkJwt = require('../middleware/auth');
 
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *   schemas:
  *     MealPlan:
  *       type: object
@@ -36,7 +42,7 @@ const mealplanController = require('../controllers/mealplanController');
  *                 type: array
  *                 items:
  *                   type: string
- *                   description: Recipe IDs associated with the meal
+ *                 description: Recipe IDs associated with the meal
  *           description: A list of meals planned for each day
  *         startDate:
  *           type: string
@@ -76,7 +82,7 @@ const mealplanController = require('../controllers/mealplanController');
  *       500:
  *         description: Server error.
  */
-router.get('/', mealplanController.getAllMealPlans);
+ router.get('/mealplan', mealplanController.getAllMealPlans);
 
 /**
  * @swagger
@@ -104,11 +110,39 @@ router.get('/:id', mealplanController.getMealPlanById);
 
 /**
  * @swagger
+ * /mealplan/user/{userId}:
+ *   get:
+ *     summary: Get meal plan for a specific user
+ *     tags: [Mealplan]
+ *     description: Fetches the meal plan associated with a user ID.
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID of the user
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Meal plan found.
+ *       404:
+ *         description: No meal plan found for the user.
+ *       500:
+ *         description: Server error.
+ */
+router.get('/user/:userId', checkJwt, mealplanController.getMealPlanByUserId);
+
+/**
+ * @swagger
  * /mealplan:
  *   post:
  *     summary: Create a new meal plan
  *     tags: [Mealplan]
  *     description: Adds a new meal plan to the database.
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -138,7 +172,52 @@ router.get('/:id', mealplanController.getMealPlanById);
  *       400:
  *         description: Bad request.
  */
-router.post('/', mealplanController.createMealPlan);
+router.post('/', checkJwt, mealplanController.createMealPlan);
+
+/**
+ * @swagger
+ * /mealplan/{mealPlanId}/add-recipe:
+ *   post:
+ *     summary: Add a recipe to a meal plan
+ *     tags: [Mealplan]
+ *     description: Adds a recipe to an existing meal plan by meal plan ID.
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: mealPlanId
+ *         required: true
+ *         description: ID of the meal plan to which the recipe should be added
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               recipeId:
+ *                 type: string
+ *                 description: The ID of the recipe to add
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 description: The date the recipe is planned for
+ *               servings:
+ *                 type: integer
+ *                 description: Number of servings for the recipe
+ *     responses:
+ *       200:
+ *         description: Recipe successfully added to the meal plan
+ *       400:
+ *         description: Invalid request parameters
+ *       404:
+ *         description: Meal plan not found
+ *       500:
+ *         description: Server error
+ */
+router.post('/:mealPlanId/add-recipe', checkJwt, mealplanController.saveMealPlan);
 
 /**
  * @swagger
@@ -147,6 +226,8 @@ router.post('/', mealplanController.createMealPlan);
  *     summary: Update a meal plan
  *     tags: [Mealplan]
  *     description: Modifies an existing meal plan.
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -183,7 +264,7 @@ router.post('/', mealplanController.createMealPlan);
  *       404:
  *         description: Meal plan not found.
  */
-router.put('/:id', mealplanController.updateMealPlan);
+router.put('/:id', checkJwt, mealplanController.updateMealPlan);
 
 /**
  * @swagger
@@ -192,6 +273,8 @@ router.put('/:id', mealplanController.updateMealPlan);
  *     summary: Delete a meal plan
  *     tags: [Mealplan]
  *     description: Removes a meal plan from the database.
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -207,6 +290,6 @@ router.put('/:id', mealplanController.updateMealPlan);
  *       500:
  *         description: Server error.
  */
-router.delete('/:id', mealplanController.deleteMealPlan);
+router.delete('/:id', checkJwt, mealplanController.deleteMealPlan);
 
 module.exports = router;

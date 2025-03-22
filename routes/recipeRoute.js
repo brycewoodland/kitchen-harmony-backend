@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const recipeController = require('../controllers/recipeController');
-const { requiresAuth } = require('express-openid-connect');
+const checkJwt = require('../middleware/auth');
 
 /**
  * @swagger
@@ -179,7 +179,7 @@ router.get('/:id', recipeController.getRecipeById);
  *       500:
  *         description: Internal server error
  */
-router.post('/user/:userId', recipeController.createRecipe);
+router.post('/user/:userId', checkJwt, recipeController.createRecipe);
 
 /**
  * @swagger
@@ -214,7 +214,7 @@ router.post('/user/:userId', recipeController.createRecipe);
  *       500:
  *         description: Internal server error
  */
-router.put('/:id', recipeController.updateRecipe);
+router.put('/:id', checkJwt, recipeController.updateRecipe);
 
 /**
  * @swagger
@@ -235,6 +235,6 @@ router.put('/:id', recipeController.updateRecipe);
  *       404:
  *         description: The recipe was not found
  */
-router.delete('/:id', recipeController.deleteRecipe);
+router.delete('/:id', checkJwt, recipeController.deleteRecipe);
 
 module.exports = router;

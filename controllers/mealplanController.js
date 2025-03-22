@@ -1,4 +1,5 @@
 const MealPlan = require('../models/mealplanModel');
+const mongoose = require('mongoose');
 
 /**
  * @function getAllMealPlans
@@ -14,6 +15,42 @@ const getAllMealPlans = async (req, res) => {
     } catch (err) {
         console.error('Error fetching meal plans:', err);
         res.status(500).json({ message: err.message });
+    }
+};
+
+/**
+ * @function getMealPlanByUserId
+ * @description Gets meal plans by user ID from the database.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void}
+ */
+const getMealPlanByUserId = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const authenticatedUserId = req.oidc.user.sub;
+
+        // Verify that the requested userId matches the authenticated user ID
+        if (userId !== authenticatedUserId) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+
+        // Convert the userId string to an ObjectId
+        const userIdObjectId = new mongoose.Types.ObjectId(userId);
+
+        const mealPlans = await MealPlan.find({ userId: userIdObjectId });
+
+        if (!mealPlans || mealPlans.length === 0) {
+            return res.status(404).json({ message: 'No meal plans found for the user' });
+        }
+
+        res.status(200).json(mealPlans);
+    } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            // Handle invalid ObjectId format
+            return res.status(400).json({ message: 'Invalid user ID format' });
+        }
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
@@ -61,6 +98,41 @@ const createMealPlan = async (req, res) => {
 };
 
 /**
+ * @function saveMealPlan
+ * @description Saves a meal plan for the authenticated user.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void}
+ */
+const saveMealPlan = async (req, res) => {
+    try {
+        const mealPlanData = req.body; // The meal plan data from the frontend
+        const userId = req.oidc.user.sub; // Or however you get the user ID
+
+        // Check if a meal plan for this user already exists
+        let mealPlan = await MealPlan.findOne({ userId: userId });
+
+        if (mealPlan) {
+            // Update the existing meal plan
+            mealPlan.meals = mealPlanData;
+            await mealPlan.save();
+        } else {
+            // Create a new meal plan
+            mealPlan = new MealPlan({
+                userId: userId,
+                meals: mealPlanData,
+            });
+            await mealPlan.save();
+        }
+
+        res.status(200).json({ message: 'Meal plan saved successfully' });
+    } catch (error) {
+        console.error('Error saving meal plan:', error);
+        res.status(500).json({ message: 'Failed to save meal plan', error: error.message });
+    }
+};
+
+/**
  * @function updateMealPlan
  * @description Updates a meal plan by its id.
  * @param {Object} req - Express request object.
@@ -100,8 +172,10 @@ const deleteMealPlan = async (req, res) => {
 
 module.exports = {
     getAllMealPlans,
+    getMealPlanByUserId,
     getMealPlanById,
     createMealPlan,
+    saveMealPlan,
     updateMealPlan,
     deleteMealPlan
 };

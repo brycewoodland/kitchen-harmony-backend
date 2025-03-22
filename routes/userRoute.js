@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { requiresAuth } = require('express-openid-connect');
+const checkJwt = require('../middleware/auth');
 
 /**
  * @swagger
@@ -59,7 +59,7 @@ const { requiresAuth } = require('express-openid-connect');
  *       404:
  *         description: The user was not found
  */
-router.get('/:id', userController.getUserById);
+router.get('/:id', checkJwt, userController.getUserById);
 
 /**
  * @swagger
@@ -116,7 +116,7 @@ router.post('/', userController.createUser);
  *       500:
  *         description: Some server error
  */
-router.put('/:id', userController.updateUser);
+router.put('/:id', checkJwt, userController.updateUser);
 
 /**
  * @swagger
@@ -137,7 +137,7 @@ router.put('/:id', userController.updateUser);
  *       404:
  *         description: The user was not found
  */
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', checkJwt, userController.deleteUser);
 
 /**
  * @swagger
@@ -162,7 +162,7 @@ router.delete('/:id', userController.deleteUser);
  *       404:
  *         description: The user was not found
  */
-router.get('/email/:email', userController.getUserByEmail);
+router.get('/email/:email', checkJwt, userController.getUserByEmail);
 
 
 module.exports = router;
