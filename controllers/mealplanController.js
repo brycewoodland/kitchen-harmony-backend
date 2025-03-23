@@ -99,38 +99,64 @@ const createMealPlan = async (req, res) => {
 
 /**
  * @function saveMealPlan
- * @description Saves a meal plan for the authenticated user.
+ * @description Saves or updates a meal plan for the authenticated user.
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @returns {void}
  */
 const saveMealPlan = async (req, res) => {
     try {
-        const mealPlanData = req.body; // The meal plan data from the frontend
-        const userId = req.oidc.user.sub; // Or however you get the user ID
-
-        // Check if a meal plan for this user already exists
-        let mealPlan = await MealPlan.findOne({ userId: userId });
-
-        if (mealPlan) {
-            // Update the existing meal plan
-            mealPlan.meals = mealPlanData;
-            await mealPlan.save();
-        } else {
-            // Create a new meal plan
-            mealPlan = new MealPlan({
-                userId: userId,
-                meals: mealPlanData,
-            });
-            await mealPlan.save();
+        // Ensure user is authenticated
+        if (!req.oidc || !req.oidc.user || !req.oidc.user.sub) {
+            return res.status(401).json({ message: "Unauthorized: No user ID found" });
         }
 
-        res.status(200).json({ message: 'Meal plan saved successfully' });
+        const userId = req.oidc.user.sub; // Extract user ID from Auth0
+        const { mealPlan } = req.body; // Get meal plan data from request
+
+        if (!mealPlan || typeof mealPlan !== 'object') {
+            return res.status(400).json({ message: "Invalid meal plan data" });
+        }
+
+        // Transform mealPlan to match the schema
+        const formattedMeals = Object.keys(mealPlan).flatMap(date =>
+            Object.entries(mealPlan[date]).map(([mealType, recipe]) => ({
+                recipeId: recipe._id,
+                date: new Date(date),
+                servings: recipe.servings || 1, // Default to 1 if not provided
+            }))
+        );
+
+        // Check if a meal plan for this user exists
+        let mealPlanRecord = await MealPlan.findOne({ userId });
+
+        if (mealPlanRecord) {
+            // Update existing meal plan
+            mealPlanRecord.meals = formattedMeals;
+            mealPlanRecord.dateRange = {
+                start: new Date(Object.keys(mealPlan)[0]),
+                end: new Date(Object.keys(mealPlan).slice(-1)[0]),
+            };
+        } else {
+            // Create a new meal plan
+            mealPlanRecord = new MealPlan({
+                userId,
+                dateRange: {
+                    start: new Date(Object.keys(mealPlan)[0]),
+                    end: new Date(Object.keys(mealPlan).slice(-1)[0]),
+                },
+                meals: formattedMeals,
+            });
+        }
+
+        await mealPlanRecord.save();
+        res.status(200).json({ message: "Meal plan saved successfully", mealPlan: mealPlanRecord });
     } catch (error) {
-        console.error('Error saving meal plan:', error);
-        res.status(500).json({ message: 'Failed to save meal plan', error: error.message });
+        console.error("Error saving meal plan:", error);
+        res.status(500).json({ message: "Failed to save meal plan", error: error.message });
     }
 };
+
 
 /**
  * @function updateMealPlan

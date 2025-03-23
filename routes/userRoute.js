@@ -10,15 +10,20 @@ const checkJwt = require('../middleware/auth');
  *     User:
  *       type: object
  *       required:
- *         - username
  *         - email
  *       properties:
  *         id:
  *           type: string
  *           description: The auto-generated id of the user
+ *         fname:
+ *           type: string
+ *           description: The first name of the user
+ *         lname:
+ *           type: string
+ *           description: The last name of the user
  *         username:
  *           type: string
- *           description: The username of the user
+ *           description: The unique username of the user
  *         email:
  *           type: string
  *           description: The email of the user
@@ -27,31 +32,35 @@ const checkJwt = require('../middleware/auth');
  *           items:
  *             type: string
  *           description: List of recipe IDs
+ *         auth0Id:
+ *           type: string
+ *           description: The unique identifier for the user in Auth0
  *       example:
  *         id: 67906759aa52af3c65c351ff
- *         lname: Bryce
- *         fname: Woodland
+ *         fname: Bryce
+ *         lname: Woodland
  *         username: bryce_woodland
  *         email: woo17047@byui.edu
  *         recipes: [67906a3e8fd11b2671912edd]
+ *         auth0Id: auth0|1234567890abcdef
  */
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/auth0/{auth0Id}:
  *   get:
- *     summary: Get a user by ID
+ *     summary: Get a user by Auth0 ID
  *     tags: [Users]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: auth0Id
  *         schema:
  *           type: string
  *         required: true
- *         description: The user ID
+ *         description: The Auth0 user ID
  *     responses:
  *       200:
- *         description: The user description by ID
+ *         description: The user details retrieved by Auth0 ID
  *         content:
  *           application/json:
  *             schema:
@@ -59,7 +68,8 @@ const checkJwt = require('../middleware/auth');
  *       404:
  *         description: The user was not found
  */
-router.get('/:id', checkJwt, userController.getUserById);
+router.get('/auth0/:auth0Id', userController.getUserById);
+
 
 /**
  * @swagger
@@ -162,7 +172,7 @@ router.delete('/:id', checkJwt, userController.deleteUser);
  *       404:
  *         description: The user was not found
  */
-router.get('/email/:email', checkJwt, userController.getUserByEmail);
+router.get('/email/:email', userController.getUserByEmail);
 
 
 module.exports = router;
