@@ -235,6 +235,6 @@ router.put('/:id', checkJwt, recipeController.updateRecipe);
  *       404:
  *         description: The recipe was not found
  */
-router.delete('/:id', checkJwt, recipeController.deleteRecipe);
+router.delete('/:recipeId/:userId', checkJwt, recipeController.deleteRecipe);
 
 module.exports = router;

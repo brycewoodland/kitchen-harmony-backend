@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Recipe = require('../models/recipeModel');
 
 /**
@@ -111,15 +112,25 @@ const updateRecipe = async (req, res) => {
  */
 const deleteRecipe = async (req, res) => {
     try {
-        const recipe = await Recipe.findByIdAndDelete(req.params.id);
-        if (!recipe) {
-            return res.status(404).json({ message: 'Recipe not found.'});
-        }
-        res.json({ message: 'Recipe deleted successfully!'});
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+      const { recipeId, userId } = req.params;
+  
+      const recipe = await Recipe.findById(recipeId);
+  
+      if (!recipe) {
+        return res.status(404).json({ message: 'Recipe not found' });
+      }
+  
+      if (recipe.userId.toString() !== mongoose.Types.ObjectId(userId).toString()) {
+        return res.status(403).json({ message: 'You do not have permission to delete this recipe' });
+      }
+  
+      await Recipe.findByIdAndDelete(recipeId);
+      res.status(200).json({ message: 'Recipe deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting recipe:', error);
+      res.status(500).json({ message: 'Error deleting recipe' });
     }
-};
+  };
 
 module.exports = {
     getAllRecipes,

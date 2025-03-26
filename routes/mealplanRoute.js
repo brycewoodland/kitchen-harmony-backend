@@ -5,72 +5,6 @@ const checkJwt = require('../middleware/auth');
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     BearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- *   schemas:
- *     MealPlan:
- *       type: object
- *       required:
- *         - name
- *         - meals
- *         - startDate
- *         - endDate
- *         - userId
- *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the meal plan
- *         name:
- *           type: string
- *           description: The name of the meal plan
- *         description:
- *           type: string
- *           description: A brief description of the meal plan
- *         meals:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               day:
- *                 type: string
- *                 description: The day of the meal (e.g., Monday, Tuesday)
- *               recipes:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: Recipe IDs associated with the meal
- *           description: A list of meals planned for each day
- *         startDate:
- *           type: string
- *           format: date
- *           description: The start date of the meal plan
- *         endDate:
- *           type: string
- *           format: date
- *           description: The end date of the meal plan
- *         userId:
- *           type: string
- *           description: The ID of the user who created the meal plan
- *       example:
- *         id: "67906a3e8fd11b2671912edd"
- *         name: "Weekly Healthy Meal Plan"
- *         description: "A meal plan for a healthy diet throughout the week."
- *         meals:
- *           - day: "Monday"
- *             recipes: ["67906a3e8fd11b2671912abc", "67906a3e8fd11b2671912def"]
- *           - day: "Tuesday"
- *             recipes: ["67906a3e8fd11b2671912ghi"]
- *         startDate: "2024-02-01"
- *         endDate: "2024-02-07"
- *         userId: "67906759aa52af3c65c351ff"
- */
-
-/**
- * @swagger
  * /mealplan:
  *   get:
  *     summary: Retrieve all meal plans
@@ -82,7 +16,7 @@ const checkJwt = require('../middleware/auth');
  *       500:
  *         description: Server error.
  */
- router.get('/mealplan', mealplanController.getAllMealPlans);
+router.get('/mealplan', mealplanController.getAllMealPlans);
 
 /**
  * @swagger
@@ -106,33 +40,33 @@ const checkJwt = require('../middleware/auth');
  *       500:
  *         description: Server error.
  */
-router.get('/:id', mealplanController.getMealPlanById);
+router.get('/:id', mealplanController.getMealPlanById); 
 
 /**
  * @swagger
- * /mealplan/user/{userId}:
+ * /mealplan/user:
  *   get:
- *     summary: Get meal plan for a specific user
- *     tags: [Mealplan]
- *     description: Fetches the meal plan associated with a user ID.
- *     security:
- *       - BearerAuth: []
+ *     summary: Get meal plan for the authenticated user
+ *     tags: [Meal Plan]
+ *     description: Fetches the meal plan associated with the authenticated user's Auth0 ID.
  *     parameters:
- *       - in: path
- *         name: userId
+ *       - in: query
+ *         name: auth0Id
  *         required: true
- *         description: ID of the user
  *         schema:
  *           type: string
+ *         description: The Auth0 ID of the user to fetch meal plans for.
  *     responses:
  *       200:
- *         description: Meal plan found.
+ *         description: Meal plans found.
+ *       400:
+ *         description: Bad request if auth0Id is missing.
  *       404:
  *         description: No meal plan found for the user.
  *       500:
  *         description: Server error.
  */
-router.get('/user/:userId', checkJwt, mealplanController.getMealPlanByUserId);
+router.get('/user', checkJwt, mealplanController.getMealPlanByAuth0Id);
 
 /**
  * @swagger
@@ -164,15 +98,13 @@ router.get('/user/:userId', checkJwt, mealplanController.getMealPlanByUserId);
  *               endDate:
  *                 type: string
  *                 format: date
- *               userId:
- *                 type: string
  *     responses:
  *       201:
  *         description: Meal plan created successfully.
  *       400:
  *         description: Bad request.
  */
-router.post('/', checkJwt, mealplanController.createMealPlan);
+router.post('/', checkJwt, mealplanController.createMealPlan); 
 
 /**
  * @swagger

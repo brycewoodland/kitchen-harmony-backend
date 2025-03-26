@@ -24,10 +24,10 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
     recipes: [{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recipe'
     }],
-    id: { type: String },
-    auth0Id: { type: String, unique: true }
+    auth0Id: { type: String, unique: true, required: true }
 });
 
 const User = mongoose.model('User', userSchema);
