@@ -30,12 +30,14 @@ const jwtCheck = auth({
   tokenSigningAlg: 'RS256'
 });
 
-app.get('/public', (req, res) => {
-  res.json({ message: 'This is a public route, accessible to anyone.' });
-});
-
+// Most specific routes first
 app.get('/protected', jwtCheck, (req, res) => {
   res.json({ message: 'This is a protected route, accessible only with a valid token!' });
+});
+
+// Then root routes
+app.get('/public', (req, res) => {
+  res.json({ message: 'This is a public route, accessible to anyone.' });
 });
 
 // Serve Swagger docs

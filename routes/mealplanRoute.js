@@ -5,106 +5,25 @@ const checkJwt = require('../middleware/auth');
 
 /**
  * @swagger
- * /mealplan:
- *   get:
- *     summary: Retrieve all meal plans
- *     tags: [Mealplan]
- *     description: Fetches all meal plans from the database.
- *     responses:
- *       200:
- *         description: A list of meal plans.
- *       500:
- *         description: Server error.
- */
-router.get('/mealplan', mealplanController.getAllMealPlans);
-
-/**
- * @swagger
- * /mealplan/{id}:
- *   get:
- *     summary: Get a specific meal plan
- *     tags: [Mealplan]
- *     description: Fetches a meal plan by its ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the meal plan
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Meal plan found.
- *       404:
- *         description: Meal plan not found.
- *       500:
- *         description: Server error.
- */
-router.get('/:id', mealplanController.getMealPlanById); 
-
-/**
- * @swagger
  * /mealplan/user:
  *   get:
  *     summary: Get meal plan for the authenticated user
- *     tags: [Meal Plan]
+ *     tags: 
+ *       - Mealplan
  *     description: Fetches the meal plan associated with the authenticated user's Auth0 ID.
- *     parameters:
- *       - in: query
- *         name: auth0Id
- *         required: true
- *         schema:
- *           type: string
- *         description: The Auth0 ID of the user to fetch meal plans for.
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Meal plans found.
- *       400:
- *         description: Bad request if auth0Id is missing.
+ *       401:
+ *         description: Unauthorized - JWT is missing or invalid.
  *       404:
  *         description: No meal plan found for the user.
  *       500:
  *         description: Server error.
  */
 router.get('/user', checkJwt, mealplanController.getMealPlanByAuth0Id);
-
-/**
- * @swagger
- * /mealplan:
- *   post:
- *     summary: Create a new meal plan
- *     tags: [Mealplan]
- *     description: Adds a new meal plan to the database.
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               meals:
- *                 type: array
- *                 items:
- *                   type: string
- *               startDate:
- *                 type: string
- *                 format: date
- *               endDate:
- *                 type: string
- *                 format: date
- *     responses:
- *       201:
- *         description: Meal plan created successfully.
- *       400:
- *         description: Bad request.
- */
-router.post('/', checkJwt, mealplanController.createMealPlan); 
 
 /**
  * @swagger
@@ -150,6 +69,30 @@ router.post('/', checkJwt, mealplanController.createMealPlan);
  *         description: Server error
  */
 router.post('/:mealPlanId/add-recipe', checkJwt, mealplanController.saveMealPlan);
+
+/**
+ * @swagger
+ * /mealplan/{id}:
+ *   get:
+ *     summary: Get a specific meal plan
+ *     tags: [Mealplan]
+ *     description: Fetches a meal plan by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the meal plan
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Meal plan found.
+ *       404:
+ *         description: Meal plan not found.
+ *       500:
+ *         description: Server error.
+ */
+router.get('/:id', mealplanController.getMealPlanById);
 
 /**
  * @swagger
@@ -223,5 +166,58 @@ router.put('/:id', checkJwt, mealplanController.updateMealPlan);
  *         description: Server error.
  */
 router.delete('/:id', checkJwt, mealplanController.deleteMealPlan);
+
+/**
+ * @swagger
+ * /mealplan:
+ *   get:
+ *     summary: Retrieve all meal plans
+ *     tags: [Mealplan]
+ *     description: Fetches all meal plans from the database.
+ *     responses:
+ *       200:
+ *         description: A list of meal plans.
+ *       500:
+ *         description: Server error.
+ */
+router.get('/', mealplanController.getAllMealPlans);
+
+/**
+ * @swagger
+ * /mealplan:
+ *   post:
+ *     summary: Create a new meal plan
+ *     tags: [Mealplan]
+ *     description: Adds a new meal plan to the database.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               meals:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       201:
+ *         description: Meal plan created successfully.
+ *       400:
+ *         description: Bad request.
+ */
+router.post('/', checkJwt, mealplanController.createMealPlan);
 
 module.exports = router;

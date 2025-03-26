@@ -19,33 +19,31 @@ const getAllMealPlans = async (req, res) => {
  * @description Gets meal plan by Auth0 user ID.
  */
 const getMealPlanByAuth0Id = async (req, res) => {
-    try {
-      const auth0Id = req.user.sub.trim(); // Get Auth0 ID from decoded JWT (sub field)
-      console.log("Auth0 User ID:", auth0Id);
+    console.log('📌 Entering getMealPlanByAuth0Id');
   
-      // Ensure the auth0Id is present
-      if (!auth0Id) {
-        return res.status(400).json({ message: 'Auth0 ID is required' });
+    try {
+      if (!req.auth || !req.auth.payload) {
+        console.error('❌ Missing authentication payload');
+        return res.status(401).json({ message: 'Unauthorized - Missing Auth Payload' });
       }
   
-      // Find meal plans associated with the Auth0 ID
+      const auth0Id = req.auth.payload.sub; // Correctly extract Auth0 ID
+      console.log('🔍 Auth0 User ID:', auth0Id);
+  
       const mealPlans = await MealPlan.find({ auth0Id });
   
-      // If no meal plans are found
-      if (!mealPlans || mealPlans.length === 0) {
-        console.error("No meal plans found for Auth0 ID:", auth0Id);
-        return res.status(404).json({ message: 'No meal plans found for the user' });
+      if (mealPlans.length === 0) {
+        console.warn('⚠️ No Meal Plans Found for User:', auth0Id);
+        return res.status(404).json({ message: 'No meal plans found for this user' });
       }
   
       res.status(200).json(mealPlans);
     } catch (error) {
-      console.error("Error fetching meal plans:", error);
+      console.error('🔥 ERROR in getMealPlanByAuth0Id:', error);
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   };
   
-  
-
 /**
  * @function getMealPlanById
  * @description Gets a single meal plan by ID.
