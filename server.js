@@ -5,7 +5,6 @@ const connectDB = require('./database/index');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./swagger');
 const routes = require('./routes');
-const session = require('express-session');
 const { auth } = require('express-oauth2-jwt-bearer');
 
 dotenv.config();

@@ -9,7 +9,7 @@ const ShoppingList = require('../models/shoppingListModel');
  */
 const getAllShoppingLists = async (req, res) => {
   try {
-      const shoppingLists = await ShoppingList.find(); // No user filtering
+      const shoppingLists = await ShoppingList.find();
       res.json(shoppingLists);
   } catch (error) {
       console.error("Error fetching shopping lists:", error);
@@ -70,7 +70,7 @@ const updateShoppingList = async (req, res) => {
   const shoppingListData = {
     title: req.body.title,
     items: req.body.items,
-    userId: req.body.userId, // Ensure this is the authenticated user's ID
+    userId: req.body.userId,
   };
 
   try {
@@ -78,7 +78,7 @@ const updateShoppingList = async (req, res) => {
     const updatedShoppingList = await ShoppingList.findByIdAndUpdate(
       req.params.shoppingListId,
       shoppingListData,
-      { new: true } // Return the updated shopping list
+      { new: true }
     );
 
     if (!updatedShoppingList) {

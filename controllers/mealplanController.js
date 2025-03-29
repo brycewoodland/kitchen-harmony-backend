@@ -19,27 +19,25 @@ const getAllMealPlans = async (req, res) => {
  * @description Gets meal plan by Auth0 user ID.
  */
 const getMealPlanByAuth0Id = async (req, res) => {
-    console.log('📌 Entering getMealPlanByAuth0Id');
-  
     try {
       if (!req.auth || !req.auth.payload) {
-        console.error('❌ Missing authentication payload');
+        console.error('Missing authentication payload');
         return res.status(401).json({ message: 'Unauthorized - Missing Auth Payload' });
       }
   
       const auth0Id = req.auth.payload.sub; // Correctly extract Auth0 ID
-      console.log('🔍 Auth0 User ID:', auth0Id);
+      console.log('Auth0 User ID:', auth0Id);
   
       const mealPlans = await MealPlan.find({ auth0Id });
   
       if (mealPlans.length === 0) {
-        console.warn('⚠️ No Meal Plans Found for User:', auth0Id);
+        console.warn('No Meal Plans Found for User:', auth0Id);
         return res.status(404).json({ message: 'No meal plans found for this user' });
       }
   
       res.status(200).json(mealPlans);
     } catch (error) {
-      console.error('🔥 ERROR in getMealPlanByAuth0Id:', error);
+      console.error('ERROR in getMealPlanByAuth0Id:', error);
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   };

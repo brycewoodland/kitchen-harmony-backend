@@ -6,7 +6,7 @@ const mealPlanSchema = new mongoose.Schema({
   meals: { type: Array, default: [] },
   startDate: { type: Date },
   endDate: { type: Date },
-  auth0Id: { type: String, required: true }, // Store Auth0 ID instead of a separate userId
+  auth0Id: { type: String, required: true },
 })
 
 const MealPlan = mongoose.model('MealPlan', mealPlanSchema);

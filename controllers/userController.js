@@ -3,7 +3,7 @@ const { User, Counter } = require('../models/userModel');
 const getNextSequenceValue = async (counterName) => {
     const counter = await Counter.findOneAndUpdate(
         { _id: counterName },
-        { $inc: { seq: 4 } },
+        { $inc: { seq: 1 } },
         { new: true, upsert: true }  // Create a new counter if it doesn't exist
     );
     return counter.seq.toString();  // Convert the numeric sequence to a string
@@ -19,7 +19,7 @@ const getNextSequenceValue = async (counterName) => {
  */
 const createUser = async (req, res) => {
     try {
-        const { email, auth0Id } = req.body;  // Get email and auth0Id from the request body
+        const { email, auth0Id } = req.body;
 
         // Check if the email already exists in the database
         const existingUser = await User.findOne({ email });
@@ -33,9 +33,9 @@ const createUser = async (req, res) => {
         // Create a new user in the database with the provided email, generated ID, and auth0Id
         const newUser = new User({
             email,
-            id: newUserId,  // Use the generated user ID
-            auth0Id,        // Store the Auth0 ID
-            recipes: [],    // Empty recipe list by default
+            id: newUserId,
+            auth0Id,
+            recipes: [],
         });
 
         // Save the new user to the database
@@ -118,7 +118,7 @@ const deleteUser = async (req, res) => {
 const getUserByEmail = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.params.email })
-            .select("_id fname lname username email recipes"); // Selects only necessary fields
+            .select("_id fname lname username email recipes");
         
         if (!user) return res.status(404).json({ message: "User not found" });
 
