@@ -93,44 +93,37 @@ const createRecipe = async (req, res) => {
  */
 const updateRecipe = async (req, res) => {
     try {
+        console.log('Updating recipe with data:', req.body); // Log the incoming data
         const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        
         if (!recipe) {
-            return res.status(404).json({ message: 'Recipe not found.'});
+            return res.status(404).json({ message: 'Recipe not found.' });
         }
-        res.json({ message: 'Recipe updated successfully!'});
+        
+        res.status(200).json({ message: 'Recipe updated successfully!', recipe });
     } catch (err) {
+        console.error('Error updating recipe:', err);
         res.status(400).json({ message: err.message });
     }
 };
 
-/**
- * @function deleteRecipe
- * @description Gets a recipe by its id and deletes its information.
- * @param {Object} req - Express request object containing user data in the body.
- * @param {Object} res - Express response object used to send back the created user or an error message.
- * @returns {void}
- */
 const deleteRecipe = async (req, res) => {
     try {
-      const { recipeId, userId } = req.params;
-  
-      const recipe = await Recipe.findById(recipeId);
-  
+      const { id } = req.params;
+
+      const recipe = await Recipe.findById(id);
+
       if (!recipe) {
         return res.status(404).json({ message: 'Recipe not found' });
       }
-  
-      if (recipe.userId.toString() !== mongoose.Types.ObjectId(userId).toString()) {
-        return res.status(403).json({ message: 'You do not have permission to delete this recipe' });
-      }
-  
-      await Recipe.findByIdAndDelete(recipeId);
+
+      await Recipe.findByIdAndDelete(id);
       res.status(200).json({ message: 'Recipe deleted successfully' });
     } catch (error) {
       console.error('Error deleting recipe:', error);
       res.status(500).json({ message: 'Error deleting recipe' });
     }
-  };
+};
 
 module.exports = {
     getAllRecipes,
