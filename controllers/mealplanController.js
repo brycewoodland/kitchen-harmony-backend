@@ -25,8 +25,7 @@ const getMealPlanByAuth0Id = async (req, res) => {
         return res.status(401).json({ message: 'Unauthorized - Missing Auth Payload' });
       }
   
-      const auth0Id = req.auth.payload.sub; // Correctly extract Auth0 ID
-      console.log('Auth0 User ID:', auth0Id);
+      const auth0Id = req.auth.payload.sub;
   
       const mealPlans = await MealPlan.find({ auth0Id });
   

@@ -35,7 +35,6 @@ const router = express.Router();
 router.use('/users', require('./userRoute'));
 router.use('/recipe', require('./recipeRoute'));
 router.use('/mealplan', require('./mealplanRoute'));
-router.use('/inventory', require('./inventoryRoute'));
 router.use('/shoppingLists', require('./shoppingListRoute'));
 
 module.exports = router;
